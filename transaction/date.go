@@ -44,3 +44,19 @@ func safelyParseInt(value string) int {
 	}
 	return int(i)
 }
+
+func (d *Date) GreaterThanEqualTo(other *Date) bool {
+	if d.Year < other.Year {
+		return false
+	}
+
+	if d.Month < other.Month {
+		return false
+	}
+
+	if d.Day < other.Day {
+		return false
+	}
+
+	return true
+}

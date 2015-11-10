@@ -8,13 +8,14 @@ import (
 )
 
 var _ = Describe("Date", func() {
+
+	var date *transaction.Date
+
+	BeforeEach(func() {
+		date = new(transaction.Date)
+	})
+
 	Describe("Parse", func() {
-		var date *transaction.Date
-
-		BeforeEach(func() {
-			date = new(transaction.Date)
-		})
-
 		Context("with nothing after the date", func() {
 			It("returns the Date and an empty remaning", func() {
 				line := "2015/10/12"
@@ -45,6 +46,38 @@ var _ = Describe("Date", func() {
 				Expect(date.Month).To(Equal(10))
 				Expect(date.Day).To(Equal(12))
 			})
+		})
+	})
+
+	Describe("GreaterThan()", func() {
+		var (
+			a *transaction.Date
+			b *transaction.Date
+		)
+
+		BeforeEach(func() {
+			a = &transaction.Date{
+				Year:  2015,
+				Month: 10,
+				Day:   12,
+			}
+			b = &transaction.Date{
+				Year:  2014,
+				Month: 10,
+				Day:   12,
+			}
+		})
+
+		It("returns true if the given date is before", func() {
+			Expect(a.GreaterThanEqualTo(b)).To(BeTrue())
+		})
+
+		It("returns false if the given date is after", func() {
+			Expect(b.GreaterThanEqualTo(a)).To(BeFalse())
+		})
+
+		It("returns true if the given date is equal", func() {
+			Expect(a.GreaterThanEqualTo(a)).To(BeTrue())
 		})
 	})
 
