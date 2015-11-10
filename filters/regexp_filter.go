@@ -16,19 +16,24 @@ func NewRegexp(pattern string) (*Regexp, error) {
 	}, err
 }
 
-func (r *Regexp) Filter(t *transaction.Transaction) bool {
-	return r.reg.MatchString(t.Title.Value) || r.checkAccounts(t.Accounts)
+func (r *Regexp) Filter(t *transaction.Transaction) []*transaction.Account {
+	if r.reg.MatchString(t.Title.Value) {
+		return t.Accounts.Accounts
+	}
+
+	return r.checkAccounts(t.Accounts)
 }
 
-func (r *Regexp) checkAccounts(accounts *transaction.AccountList) bool {
+func (r *Regexp) checkAccounts(accounts *transaction.AccountList) []*transaction.Account {
 	if accounts == nil {
-		return false
+		return nil
 	}
 
+	var results []*transaction.Account
 	for _, acc := range accounts.Accounts {
 		if r.reg.MatchString(acc.Name) {
-			return true
+			results = append(results, acc)
 		}
 	}
-	return false
+	return results
 }

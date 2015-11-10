@@ -2,8 +2,8 @@ package filters
 
 import "github.com/apoydence/ledger/transaction"
 
-type FilterFunc func(*transaction.Transaction) bool
+type FilterFunc func(*transaction.Transaction) []*transaction.Account
 
-func (f FilterFunc) Filter(t *transaction.Transaction) bool {
+func (f FilterFunc) Filter(t *transaction.Transaction) []*transaction.Account {
 	return f(t)
 }

@@ -32,16 +32,16 @@ var _ = Describe("RegexpFilter", func() {
 			}
 		})
 
-		It("returns true for a title that matches", func() {
+		It("returns all the accounts for a title that matches", func() {
 			filter, err := filters.NewRegexp(`xxy{2}zz`)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(filter.Filter(t)).To(BeTrue())
+			Expect(filter.Filter(t)).To(HaveLen(2))
 		})
 
 		It("returns false for a non-matching title", func() {
 			filter, err := filters.NewRegexp(`something-else`)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(filter.Filter(t)).To(BeFalse())
+			Expect(filter.Filter(t)).To(HaveLen(0))
 		})
 	})
 
@@ -49,19 +49,19 @@ var _ = Describe("RegexpFilter", func() {
 		It("returns true for the first account name that matches", func() {
 			filter, err := filters.NewRegexp(`Expenses\:\w+\:FastFood`)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(filter.Filter(t)).To(BeTrue())
+			Expect(filter.Filter(t)).To(HaveLen(1))
 		})
 
 		It("returns true for the second account name that matches", func() {
 			filter, err := filters.NewRegexp(`Visa`)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(filter.Filter(t)).To(BeTrue())
+			Expect(filter.Filter(t)).To(HaveLen(1))
 		})
 
 		It("returns false for non-matching account names", func() {
 			filter, err := filters.NewRegexp(`MasterCard`)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(filter.Filter(t)).To(BeFalse())
+			Expect(filter.Filter(t)).To(HaveLen(0))
 		})
 	})
 })

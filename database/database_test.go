@@ -26,6 +26,9 @@ var _ = Describe("Database", func() {
 			mockFilter = newMockFilter()
 			ts = []*transaction.Transaction{
 				{
+					Accounts: &transaction.AccountList{
+						Accounts: make([]*transaction.Account, 2),
+					},
 					Date: &transaction.Date{
 						Year:  2015,
 						Month: 10,
@@ -33,6 +36,9 @@ var _ = Describe("Database", func() {
 					},
 				},
 				{
+					Accounts: &transaction.AccountList{
+						Accounts: make([]*transaction.Account, 2),
+					},
 					Date: &transaction.Date{
 						Year:  2014,
 						Month: 10,
@@ -40,6 +46,9 @@ var _ = Describe("Database", func() {
 					},
 				},
 				{
+					Accounts: &transaction.AccountList{
+						Accounts: make([]*transaction.Account, 2),
+					},
 					Date: &transaction.Date{
 						Year:  2014,
 						Month: 11,
@@ -47,6 +56,9 @@ var _ = Describe("Database", func() {
 					},
 				},
 				{
+					Accounts: &transaction.AccountList{
+						Accounts: make([]*transaction.Account, 2),
+					},
 					Date: &transaction.Date{
 						Year:  2015,
 						Month: 1,
@@ -57,6 +69,8 @@ var _ = Describe("Database", func() {
 		})
 
 		It("filters the transactions by the time window", func() {
+			mockFilter.resultCh <- make([]*transaction.Account, 1)
+			mockFilter.resultCh <- make([]*transaction.Account, 1)
 			db.Add(ts...)
 			start := &transaction.Date{
 				Year:  2015,
@@ -75,8 +89,8 @@ var _ = Describe("Database", func() {
 		})
 
 		It("filters the transactions by the time window and filter", func() {
-			mockFilter.resultCh <- false
-			mockFilter.resultCh <- true
+			mockFilter.resultCh <- nil
+			mockFilter.resultCh <- make([]*transaction.Account, 1)
 			db.Add(ts...)
 			start := &transaction.Date{
 				Year:  2014,
