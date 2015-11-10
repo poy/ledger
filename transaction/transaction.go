@@ -1,5 +1,7 @@
 package transaction
 
+import "fmt"
+
 type Transaction struct {
 	Date     *Date
 	Title    *Title
@@ -25,4 +27,8 @@ func (t *Transaction) Parse(line string) (string, error) {
 	}
 
 	return "", nil
+}
+
+func (t *Transaction) String() string {
+	return fmt.Sprintf("%v %v\n%v", t.Date, t.Title, t.Accounts)
 }

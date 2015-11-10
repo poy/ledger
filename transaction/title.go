@@ -15,3 +15,7 @@ func (t *Title) Parse(line string) (string, error) {
 
 	return values[1], nil
 }
+
+func (t *Title) String() string {
+	return t.Value
+}

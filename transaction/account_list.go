@@ -18,6 +18,16 @@ func (a *AccountList) Parse(line string) (string, error) {
 	return "", a.reconcile()
 }
 
+func (a *AccountList) String() string {
+	var result string
+
+	for _, acc := range a.Accounts {
+		result = fmt.Sprintf("%s\t%v\n", result, acc)
+	}
+
+	return result
+}
+
 func (a *AccountList) reconcile() error {
 	var total float32
 	for _, acc := range a.Accounts {

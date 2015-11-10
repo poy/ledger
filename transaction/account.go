@@ -34,6 +34,10 @@ func (a *Account) Parse(line string) (string, error) {
 	return parsed[len(parsed)-1], nil
 }
 
+func (a *Account) String() string {
+	return fmt.Sprintf("%s\t$%-6.2f", a.Name, a.Value)
+}
+
 func safelyParseFloat(value string) float32 {
 	i, err := strconv.ParseFloat(value, 32)
 	if err != nil {
