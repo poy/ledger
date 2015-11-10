@@ -28,6 +28,28 @@ var _ = Describe("Date", func() {
 				Expect(date.Day).To(Equal(12))
 			})
 
+			It("returns the Date with a single month digit", func() {
+				line := "2015/1/12"
+				remaining, err := date.Parse(line)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(remaining).To(BeEmpty())
+				Expect(date.Year).To(Equal(2015))
+				Expect(date.Month).To(Equal(1))
+				Expect(date.Day).To(Equal(12))
+			})
+
+			It("returns the Date with a single dat digit", func() {
+				line := "2015/10/1"
+				remaining, err := date.Parse(line)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(remaining).To(BeEmpty())
+				Expect(date.Year).To(Equal(2015))
+				Expect(date.Month).To(Equal(10))
+				Expect(date.Day).To(Equal(1))
+			})
+
 			It("returns an error for an invalid date", func() {
 				line := "2015/xx/12"
 				_, err := date.Parse(line)

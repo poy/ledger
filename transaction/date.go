@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	dateRegexpPattern = `^(\d{4})/(\d{2})/(\d{2})\s*([\w\W]*)$`
+	dateRegexpPattern = `^(\d{4})/(\d\d?)/(\d\d?)\s*([\w\W]*)$`
 )
 
 var (
