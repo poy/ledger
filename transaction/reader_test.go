@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("TransactionReader", func() {
+var _ = Describe("Reader", func() {
 
 	var reader *transaction.Reader
 
