@@ -32,5 +32,11 @@ var _ = Describe("AccountList", func() {
 
 		})
 
+		It("returns an error if the accounts don't reconcile", func() {
+			line := "\tExpenses:Auto:Gas         $20.90\n\tLiabilities:MasterCard   $-10.90"
+			_, err := accountList.Parse(line)
+			Expect(err).To(HaveOccurred())
+		})
+
 	})
 })

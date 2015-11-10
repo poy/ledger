@@ -1,5 +1,7 @@
 package transaction
 
+import "fmt"
+
 type AccountList struct {
 	Accounts []*Account
 }
@@ -13,5 +15,18 @@ func (a *AccountList) Parse(line string) (string, error) {
 		}
 		a.Accounts = append(a.Accounts, account)
 	}
-	return "", nil
+	return "", a.reconcile()
+}
+
+func (a *AccountList) reconcile() error {
+	var total float32
+	for _, acc := range a.Accounts {
+		total += acc.Value
+	}
+
+	if total != 0 {
+		return fmt.Errorf("Does not reconcile. Off by $%-6.2f", total)
+	}
+
+	return nil
 }
