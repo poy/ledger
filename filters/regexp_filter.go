@@ -9,10 +9,11 @@ type Regexp struct {
 	reg *regexp.Regexp
 }
 
-func NewRegexp(pattern string) *Regexp {
+func NewRegexp(pattern string) (*Regexp, error) {
+	reg, err := regexp.Compile(pattern)
 	return &Regexp{
-		reg: regexp.MustCompile(pattern),
-	}
+		reg: reg,
+	}, err
 }
 
 func (r *Regexp) Filter(t *transaction.Transaction) bool {
