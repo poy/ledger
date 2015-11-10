@@ -8,10 +8,12 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("TransactionList", func() {
+var _ = Describe("TransactionReader", func() {
 
-	It("reads all the transactions", func() {
-		reader := strings.NewReader(`
+	var reader *transaction.Reader
+
+	BeforeEach(func() {
+		strReader := strings.NewReader(`
 2015/10/12 Exxon
 		Expenses:Auto:Gas         $10.00
 		Liabilities:MasterCard   $-10.00
@@ -21,10 +23,16 @@ var _ = Describe("TransactionList", func() {
 		Expenses:Food:FastFood $21.50
 		Liabilities:AmericanExpress $-21.50
 `)
-		transactionList, err := transaction.ReadList(reader)
+		reader = transaction.NewReader(strReader)
+	})
+
+	It("reads all the transactions", func() {
+		t1, err := reader.Next()
 		Expect(err).ToNot(HaveOccurred())
-		Expect(transactionList).To(HaveLen(2))
-		Expect(transactionList).To(ContainElement(
+		t2, err := reader.Next()
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(t1).To(Equal(
 			&transaction.Transaction{
 				Date: &transaction.Date{
 					Year:  2015,
@@ -48,7 +56,7 @@ var _ = Describe("TransactionList", func() {
 				},
 			}))
 
-		Expect(transactionList).To(ContainElement(
+		Expect(t2).To(Equal(
 			&transaction.Transaction{
 				Date: &transaction.Date{
 					Year:  2015,
