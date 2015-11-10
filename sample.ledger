@@ -1,0 +1,19 @@
+2015/10/1 Exxon
+  Expenses:Auto:Gas            $54.98
+  Liabilities:AmericanExpress  $-54.98
+
+2015/10/1 Qdoba
+  Expenses:Food:FastFood       $21.98
+  Liabilities:Visa             $-21.98
+
+2015/10/3 Target
+  Expenses:Shopping            $98.76
+  Liabilities:Visa             $-98.76
+
+2015/10/8 Chevron 
+  Expenses:Auto:Gas            $44.78
+  Liabilities:AmericanExpress  $-44.78
+
+2015/10/15 Shell
+  Expenses:Auto:Gas            $55.96
+  Liabilities:AmericanExpress  $-55.96
