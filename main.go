@@ -12,7 +12,7 @@ import (
 
 const (
 	FileLocation = "file"
-	RegexpUsage  = "[PATTERN] [START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD]"
+	RegexpUsage  = "[START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD] [PATTERN]"
 )
 
 func main() {
