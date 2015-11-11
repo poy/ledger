@@ -17,14 +17,12 @@ var _ = Describe("Database", func() {
 	})
 
 	var (
-		ts             []*transaction.Transaction
-		mockFilter     *mockFilter
-		mockAggregator *mockAggregator
+		ts         []*transaction.Transaction
+		mockFilter *mockFilter
 	)
 
 	BeforeEach(func() {
 		mockFilter = newMockFilter()
-		mockAggregator = newMockAggregator()
 
 		ts = []*transaction.Transaction{
 			{
@@ -110,25 +108,42 @@ var _ = Describe("Database", func() {
 		Expect(results).To(ContainElement(ts[2]))
 	})
 
-	It("filters and aggregates the transactions", func() {
-		mockFilter.resultCh <- nil
-		mockFilter.resultCh <- make([]*transaction.Account, 1)
-		mockAggregator.resultCh <- 99
-		db.Add(ts...)
-		start := &transaction.Date{
-			Year:  2014,
-			Month: 10,
-			Day:   3,
-		}
-		end := &transaction.Date{
-			Year:  2014,
-			Month: 11,
-			Day:   30,
-		}
-		results, aggResults := db.Aggregate(start, end, mockFilter, mockAggregator)
-		Expect(mockFilter.transactionCh).To(HaveLen(2))
-		Expect(results).To(HaveLen(1))
-		Expect(results).To(ContainElement(ts[2]))
-		Expect(aggResults).To(BeEquivalentTo(99))
+	Context("With aggregation", func() {
+
+		var (
+			mockAggregator1 *mockAggregator
+			mockAggregator2 *mockAggregator
+		)
+
+		BeforeEach(func() {
+			mockAggregator1 = newMockAggregator()
+			mockAggregator2 = newMockAggregator()
+		})
+
+		It("filters and aggregates the transactions", func() {
+			mockFilter.resultCh <- nil
+			mockFilter.resultCh <- make([]*transaction.Account, 1)
+			mockAggregator1.resultCh <- 99
+			mockAggregator2.resultCh <- 101
+			db.Add(ts...)
+			start := &transaction.Date{
+				Year:  2014,
+				Month: 10,
+				Day:   3,
+			}
+			end := &transaction.Date{
+				Year:  2014,
+				Month: 11,
+				Day:   30,
+			}
+			results, aggResults := db.Aggregate(start, end, mockFilter, mockAggregator1, mockAggregator2)
+
+			Expect(mockFilter.transactionCh).To(HaveLen(2))
+			Expect(results).To(HaveLen(1))
+			Expect(results).To(ContainElement(ts[2]))
+			Expect(aggResults).To(HaveLen(2))
+			Expect(aggResults[0]).To(BeEquivalentTo(99))
+			Expect(aggResults[1]).To(BeEquivalentTo(101))
+		})
 	})
 })

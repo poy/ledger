@@ -4,6 +4,10 @@ import (
 	"github.com/apoydence/ledger/transaction"
 )
 
+func init() {
+	AddToStore("sum", NewSum())
+}
+
 func NewSum() AggregatorFunc {
 	return AggregatorFunc(func(accounts []*transaction.Account) float64 {
 		var result float64

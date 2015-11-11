@@ -24,9 +24,15 @@ func (db *Database) Add(ts ...*transaction.Transaction) {
 	db.transactionList = append(db.transactionList, ts...)
 }
 
-func (db *Database) Aggregate(start, end *transaction.Date, f Filter, agg Aggregator) ([]*transaction.Transaction, float64) {
+func (db *Database) Aggregate(start, end *transaction.Date, f Filter, aggs ...Aggregator) ([]*transaction.Transaction, []float64) {
 	results, accs := db.subQuery(start, end, f)
-	return results, agg.Aggregate(accs)
+
+	var aggResults []float64
+	for _, agg := range aggs {
+		aggResults = append(aggResults, agg.Aggregate(accs))
+	}
+
+	return results, aggResults
 }
 
 func (db *Database) Query(start, end *transaction.Date, f Filter) []*transaction.Transaction {

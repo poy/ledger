@@ -64,15 +64,21 @@ func regexpFilter(c *cli.Context) {
 
 	db := loadDatabase(fileLocation)
 
-	if len(c.StringSlice("agg")) == 0 {
+	aggNameSlice := c.StringSlice("agg")
+	if len(aggNameSlice) == 0 {
 		printResults(db.Query(start, end, filter))
 		return
 	}
 
-	results, agg := db.Aggregate(start, end, filter, aggregators.NewSum())
+	aggs, err := aggregators.Fetch(aggNameSlice...)
+	fatalErr(err)
+	results, aggResults := db.Aggregate(start, end, filter, aggs...)
 	printResults(results)
 
-	fmt.Printf("===============\nSum = $%-6.2f\n", agg)
+	fmt.Println("===============\n")
+	for i, aggResult := range aggResults {
+		fmt.Printf("%s = $%-6.2f\n", aggNameSlice[i], aggResult)
+	}
 }
 
 func printResults(results []*transaction.Transaction) {
@@ -118,6 +124,10 @@ func loadDatabase(path string) *database.Database {
 }
 
 func fatalErr(err error) {
+	if err == nil {
+		return
+	}
+
 	fmt.Println(err.Error())
 	os.Exit(1)
 }
