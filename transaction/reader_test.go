@@ -22,6 +22,8 @@ var _ = Describe("Reader", func() {
 2015/10/12 Qdoba
 		Expenses:Food:FastFood $21.50
 		Liabilities:AmericanExpress $-21.50
+
+invalid
 `)
 		reader = transaction.NewReader(strReader)
 	})
@@ -79,7 +81,16 @@ var _ = Describe("Reader", func() {
 					},
 				},
 			}))
+	})
 
+	It("reports the line number with an error", func() {
+		_, err := reader.Next()
+		Expect(err).ToNot(HaveOccurred())
+		_, err = reader.Next()
+		Expect(err).ToNot(HaveOccurred())
+		_, err = reader.Next()
+		Expect(err).To(HaveOccurred())
+		Expect(err.Line).To(BeEquivalentTo(10))
 	})
 
 })
