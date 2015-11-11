@@ -39,9 +39,20 @@ func main() {
 				Value: new(cli.StringSlice),
 			}),
 		},
+		{
+			Name:   "aggregators",
+			Usage:  "Lists the available aggregators",
+			Action: listAggregators,
+		},
 	}
 
 	app.Run(os.Args)
+}
+
+func listAggregators(c *cli.Context) {
+	for name := range aggregators.Store() {
+		fmt.Println(name)
+	}
 }
 
 func regexpFilter(c *cli.Context) {
