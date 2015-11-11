@@ -20,7 +20,7 @@ func init() {
 
 type Account struct {
 	Name  string
-	Value float32
+	Value float64
 }
 
 func (a *Account) Parse(line string) (string, error) {
@@ -38,10 +38,10 @@ func (a *Account) String() string {
 	return fmt.Sprintf("%s\t$%-6.2f", a.Name, a.Value)
 }
 
-func safelyParseFloat(value string) float32 {
-	i, err := strconv.ParseFloat(value, 32)
+func safelyParseFloat(value string) float64 {
+	i, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		panic(fmt.Sprintf("Invalid float32(%s): %v", value, err))
+		panic(fmt.Sprintf("Invalid float64(%s): %v", value, err))
 	}
-	return float32(i)
+	return float64(i)
 }

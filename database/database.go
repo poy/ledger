@@ -1,6 +1,12 @@
 package database
 
-import "github.com/apoydence/ledger/transaction"
+import (
+	"github.com/apoydence/ledger/transaction"
+)
+
+type Aggregator interface {
+	Aggregate(acc []*transaction.Account) float64
+}
 
 type Filter interface {
 	Filter(*transaction.Transaction) []*transaction.Account
@@ -18,14 +24,31 @@ func (db *Database) Add(ts ...*transaction.Transaction) {
 	db.transactionList = append(db.transactionList, ts...)
 }
 
+func (db *Database) Aggregate(start, end *transaction.Date, f Filter, agg Aggregator) ([]*transaction.Transaction, float64) {
+	results, accs := db.subQuery(start, end, f)
+	return results, agg.Aggregate(accs)
+}
+
 func (db *Database) Query(start, end *transaction.Date, f Filter) []*transaction.Transaction {
-	var results []*transaction.Transaction
+	results, _ := db.subQuery(start, end, f)
+	return results
+}
+
+func (db *Database) subQuery(start, end *transaction.Date, f Filter) ([]*transaction.Transaction, []*transaction.Account) {
+	var ts []*transaction.Transaction
+	var accsResults []*transaction.Account
+
 	for _, t := range db.transactionList {
-		if inTimeRange(t.Date, start, end) && len(filter(t, f)) > 0 {
-			results = append(results, t)
+		if !inTimeRange(t.Date, start, end) {
+			continue
+		}
+		accs := filter(t, f)
+		if len(accs) > 0 {
+			ts = append(ts, t)
+			accsResults = append(accsResults, accs...)
 		}
 	}
-	return results
+	return ts, accsResults
 }
 
 func inTimeRange(date, start, end *transaction.Date) bool {

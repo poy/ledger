@@ -29,7 +29,7 @@ func (a *AccountList) String() string {
 }
 
 func (a *AccountList) reconcile() error {
-	var total float32
+	var total float64
 	for _, acc := range a.Accounts {
 		total += acc.Value
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/apoydence/ledger/aggregators"
 	"github.com/apoydence/ledger/database"
 	"github.com/apoydence/ledger/filters"
 	"github.com/apoydence/ledger/transaction"
@@ -19,7 +20,6 @@ func main() {
 	app.Name = "ledger"
 	app.Usage = "Reconcile your cash"
 	app.Action = func(c *cli.Context) {
-		println("ASDF")
 		cli.ShowAppHelp(c)
 	}
 	app.Flags = []cli.Flag{
@@ -33,7 +33,11 @@ func main() {
 			Name:   "regexp",
 			Usage:  RegexpUsage,
 			Action: regexpFilter,
-			Flags:  app.Flags,
+			Flags: append(app.Flags, cli.StringSliceFlag{
+				Name:  "agg",
+				Usage: "name of aggregator",
+				Value: new(cli.StringSlice),
+			}),
 		},
 	}
 
@@ -59,7 +63,16 @@ func regexpFilter(c *cli.Context) {
 	}
 
 	db := loadDatabase(fileLocation)
-	printResults(db.Query(start, end, filter))
+
+	if len(c.StringSlice("agg")) == 0 {
+		printResults(db.Query(start, end, filter))
+		return
+	}
+
+	results, agg := db.Aggregate(start, end, filter, aggregators.NewSum())
+	printResults(results)
+
+	fmt.Printf("===============\nSum = $%-6.2f\n", agg)
 }
 
 func printResults(results []*transaction.Transaction) {
