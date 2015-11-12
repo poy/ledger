@@ -16,7 +16,7 @@ var _ = Describe("AccountList", func() {
 		})
 
 		It("reads all the account lines", func() {
-			line := "\tExpenses:Auto:Gas         $10.90\n\tLiabilities:MasterCard   $-10.90"
+			line := "\tExpenses:Auto:Gas         $10.90\n\tLiabilities:MasterCard   $-10.90\n"
 			remaining, err := accountList.Parse(line)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(remaining).To(BeZero())

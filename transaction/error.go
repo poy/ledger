@@ -9,11 +9,18 @@ type Error struct {
 
 func NewError(err error, line int64) *Error {
 	return &Error{
-		msg:  err.Error(),
+		msg:  readErrMsg(err),
 		Line: line,
 	}
 }
 
 func (t *Error) Error() string {
 	return fmt.Sprintf("%s (line %d)", t.msg, t.Line)
+}
+
+func readErrMsg(err error) string {
+	if err != nil {
+		return err.Error()
+	}
+	return ""
 }

@@ -1,6 +1,8 @@
 package transaction
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type AccountList struct {
 	Accounts []*Account

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	accountRegexpPattern = `\s+([\w\:]+)\s+\$(\-?\d+(\.\d+)?)(\n+([\w\W]*))?`
+	accountRegexpPattern = `\s*([\w\:]+)\s+\$(\-?\d+(\.\d+)?)(\n+([\w\W]*))?`
 )
 
 var (

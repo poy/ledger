@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"strings"
 )
 
 type Reader struct {
@@ -25,7 +26,8 @@ func (t *Reader) Next() (*Transaction, *Error) {
 
 	for t.scanner.Scan() {
 		t.currentLine++
-		if len(t.scanner.Text()) > 0 && (len(block) == 0 || isSpace(t.scanner.Text()[0])) {
+		trimmedText := strings.Trim(t.scanner.Text(), " \t")
+		if len(trimmedText) > 0 && (len(block) == 0 || isSpace(t.scanner.Text()[0])) {
 			block = fmt.Sprintf("%s%s\n", block, t.scanner.Text())
 			continue
 		}
@@ -47,7 +49,7 @@ func (t *Reader) Next() (*Transaction, *Error) {
 		return nil, NewError(err, t.currentLine)
 	}
 
-	return tr, NewError(t.scanner.Err(), t.currentLine)
+	return tr, nil
 }
 
 func isSpace(char byte) bool {

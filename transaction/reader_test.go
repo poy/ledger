@@ -17,13 +17,11 @@ var _ = Describe("Reader", func() {
 2015/10/12 Exxon
 		Expenses:Auto:Gas         $10.00
 		Liabilities:MasterCard   $-10.00
-
+    
 
 2015/10/12 Qdoba
 		Expenses:Food:FastFood $21.50
 		Liabilities:AmericanExpress $-21.50
-
-invalid
 `)
 		reader = transaction.NewReader(strReader)
 	})
@@ -83,14 +81,25 @@ invalid
 			}))
 	})
 
-	It("reports the line number with an error", func() {
-		_, err := reader.Next()
-		Expect(err).ToNot(HaveOccurred())
-		_, err = reader.Next()
-		Expect(err).ToNot(HaveOccurred())
-		_, err = reader.Next()
-		Expect(err).To(HaveOccurred())
-		Expect(err.Line).To(BeEquivalentTo(10))
+	Context("invalid transaction", func() {
+		BeforeEach(func() {
+			strReader := strings.NewReader(`
+2015/10/12 Qdoba
+		Expenses:Food:FastFood $21.50
+		Liabilities:AmericanExpress $-21.50
+
+invalid
+`)
+			reader = transaction.NewReader(strReader)
+		})
+
+		It("reports the line number with an error", func() {
+			_, err := reader.Next()
+			Expect(err).ToNot(HaveOccurred())
+			_, err = reader.Next()
+			Expect(err).To(HaveOccurred())
+			Expect(err.Line).To(BeEquivalentTo(5))
+		})
 	})
 
 })
