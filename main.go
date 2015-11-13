@@ -67,13 +67,13 @@ func listAggregators(c *cli.Context) {
 }
 
 func report(c *cli.Context) {
-	fileLocation := c.String(FileLocation)
-	if len(fileLocation) == 0 {
-		fatal(fmt.Sprintf("Missing required '--%s' flag", FileLocation), c)
-	}
-
 	if len(c.Args()) != 2 {
 		fatal("", c)
+	}
+
+	fileLocation := c.String(FileLocation)
+	if len(fileLocation) == 0 {
+		fatal(fmt.Sprintf("Missing required '--%s' flag\n", FileLocation), c)
 	}
 
 	filter := buildFilter(c)
