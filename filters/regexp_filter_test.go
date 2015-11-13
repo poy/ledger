@@ -64,4 +64,8 @@ var _ = Describe("RegexpFilter", func() {
 			Expect(filter.Filter(t)).To(HaveLen(0))
 		})
 	})
+
+	It("registers itself with the store", func() {
+		Expect(filters.Fetch("regexp")).To(HaveLen(1))
+	})
 })

@@ -1,15 +1,20 @@
 package filters
 
 import (
+	"github.com/apoydence/ledger/database"
 	"github.com/apoydence/ledger/transaction"
 	"regexp"
 )
+
+func init() {
+	AddToStore("regexp", FilterFactoryFunc(NewRegexp))
+}
 
 type Regexp struct {
 	reg *regexp.Regexp
 }
 
-func NewRegexp(pattern string) (*Regexp, error) {
+func NewRegexp(pattern string) (database.Filter, error) {
 	reg, err := regexp.Compile(pattern)
 	return &Regexp{
 		reg: reg,

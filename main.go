@@ -12,7 +12,8 @@ import (
 
 const (
 	FileLocation = "file"
-	RegexpUsage  = "[START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD] [PATTERN]"
+	ReportName   = "report"
+	ReportUsage  = "[START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD]"
 )
 
 func main() {
@@ -30,14 +31,10 @@ func main() {
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:   "regexp",
-			Usage:  RegexpUsage,
-			Action: regexpFilter,
-			Flags: append(app.Flags, cli.StringSliceFlag{
-				Name:  "agg",
-				Usage: "name of aggregator",
-				Value: new(cli.StringSlice),
-			}),
+			Name:   ReportName,
+			Usage:  ReportUsage,
+			Action: report,
+			Flags:  buildReportFlags(app.Flags),
 		},
 		{
 			Name:   "aggregators",
@@ -49,29 +46,50 @@ func main() {
 	app.Run(os.Args)
 }
 
+func buildReportFlags(appFlags []cli.Flag) []cli.Flag {
+	var results []cli.Flag
+	results = append(results, appFlags...)
+	results = append(results, buildFilterFlags()...)
+	results = append(results, cli.StringSliceFlag{
+		Name:  "agg",
+		Usage: "name of aggregator",
+		Value: new(cli.StringSlice),
+	})
+
+	return results
+}
+
+func buildFilterFlags() []cli.Flag {
+	var results []cli.Flag
+	for name := range filters.Store() {
+		results = append(results, cli.StringSliceFlag{
+			Name:  fmt.Sprintf("filter-%s", name),
+			Value: new(cli.StringSlice),
+		})
+	}
+	return results
+}
+
 func listAggregators(c *cli.Context) {
 	for name := range aggregators.Store() {
 		fmt.Println(name)
 	}
 }
 
-func regexpFilter(c *cli.Context) {
+func report(c *cli.Context) {
 	fileLocation := c.String(FileLocation)
 	if len(fileLocation) == 0 {
 		fatal(fmt.Sprintf("Missing required '--%s' flag", FileLocation))
 	}
 
-	if len(c.Args()) != 3 {
-		fatal(fmt.Sprintf("Usage:\nledger regexp %s", RegexpUsage))
+	if len(c.Args()) != 2 {
+		fatal(fmt.Sprintf("Usage:\nledger %s %s", ReportName, ReportUsage))
 	}
+
+	filter := buildFilter(c)
 
 	start := loadDate(c.Args().Get(0))
 	end := loadDate(c.Args().Get(1))
-
-	filter, err := filters.NewRegexp(c.Args().Get(2))
-	if err != nil {
-		fatalErr(err)
-	}
 
 	db := loadDatabase(fileLocation)
 
@@ -90,6 +108,28 @@ func regexpFilter(c *cli.Context) {
 	for i, aggResult := range aggResults {
 		fmt.Printf("%s = $%-6.2f\n", aggNameSlice[i], aggResult)
 	}
+}
+
+func buildFilter(c *cli.Context) database.Filter {
+	var results []database.Filter
+	for name, factory := range filters.Store() {
+		filterArgs := c.StringSlice(fmt.Sprintf("filter-%s", name))
+		if len(filterArgs) <= 0 {
+			continue
+		}
+
+		for _, arg := range filterArgs {
+			builtFilter, err := factory.Generate(arg)
+			fatalErr(err)
+			results = append(results, builtFilter)
+		}
+	}
+
+	if len(results) == 0 {
+		return nil
+	}
+
+	return filters.CombineFilters(results...)
 }
 
 func printResults(results []*transaction.Transaction) {
