@@ -19,23 +19,10 @@ const (
 func main() {
 	app := cli.NewApp()
 	app.Name = "ledger"
-	app.Usage = "Reconcile your cash"
-	app.Action = func(c *cli.Context) {
-		cli.ShowAppHelp(c)
-	}
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  FileLocation,
-			Usage: "The path to the ledger transaction file",
-		},
-	}
+	app.Usage = ReportUsage
+	app.Action = report
+	app.Flags = buildReportFlags()
 	app.Commands = []cli.Command{
-		{
-			Name:   ReportName,
-			Usage:  ReportUsage,
-			Action: report,
-			Flags:  buildReportFlags(app.Flags),
-		},
 		{
 			Name:   "aggregators",
 			Usage:  "Lists the available aggregators",
@@ -46,9 +33,12 @@ func main() {
 	app.Run(os.Args)
 }
 
-func buildReportFlags(appFlags []cli.Flag) []cli.Flag {
+func buildReportFlags() []cli.Flag {
 	var results []cli.Flag
-	results = append(results, appFlags...)
+	results = append(results, cli.StringFlag{
+		Name:  FileLocation,
+		Usage: "The path to the ledger transaction file",
+	})
 	results = append(results, buildFilterFlags()...)
 	results = append(results, cli.StringSliceFlag{
 		Name:  "agg",
@@ -79,11 +69,11 @@ func listAggregators(c *cli.Context) {
 func report(c *cli.Context) {
 	fileLocation := c.String(FileLocation)
 	if len(fileLocation) == 0 {
-		fatal(fmt.Sprintf("Missing required '--%s' flag", FileLocation))
+		fatal(fmt.Sprintf("Missing required '--%s' flag", FileLocation), c)
 	}
 
 	if len(c.Args()) != 2 {
-		fatal(fmt.Sprintf("Usage:\nledger %s %s", ReportName, ReportUsage))
+		fatal("", c)
 	}
 
 	filter := buildFilter(c)
@@ -146,7 +136,7 @@ func loadDate(value string) *transaction.Date {
 	}
 
 	if len(extra) > 0 {
-		fatal(fmt.Sprintf("Invalid date %s", value))
+		fatalErr(fmt.Errorf("Invalid date %s", value))
 	}
 
 	return d
@@ -183,7 +173,8 @@ func fatalErr(err error) {
 	os.Exit(1)
 }
 
-func fatal(msg string) {
+func fatal(msg string, c *cli.Context) {
 	fmt.Println(msg)
+	cli.ShowAppHelp(c)
 	os.Exit(1)
 }
