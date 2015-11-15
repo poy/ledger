@@ -17,7 +17,7 @@ var _ = Describe("Account", func() {
 
 		Context("with additional lines", func() {
 			It("parses the account line", func() {
-				line := "Expenses:Auto:Gas     $10.00\n\tLiabilities:MasterCard   $-10.00"
+				line := "Expenses:Auto:Gas     $10.00 \n\tLiabilities:MasterCard   $-10.00"
 				remaining, err := account.Parse(line)
 
 				Expect(err).ToNot(HaveOccurred())
@@ -26,6 +26,7 @@ var _ = Describe("Account", func() {
 				Expect(account.Value).To(BeEquivalentTo(10))
 			})
 		})
+
 		Context("without additional lines", func() {
 			It("parses the account line", func() {
 				line := "Expenses:Auto:Gas     $10.00"

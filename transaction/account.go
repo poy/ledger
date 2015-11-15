@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -24,14 +25,19 @@ type Account struct {
 }
 
 func (a *Account) Parse(line string) (string, error) {
-	parsed := accountRegexp.FindStringSubmatch(line)
+	lines := strings.SplitN(line, "\n", 2)
+	parsed := accountRegexp.FindStringSubmatch(strings.Trim(lines[0], " \t"))
 	if len(parsed) == 0 {
 		return "", fmt.Errorf("Didn't find an account in the line: %s", line)
 	}
 
 	a.Name = parsed[1]
 	a.Value = safelyParseFloat(parsed[2])
-	return parsed[len(parsed)-1], nil
+
+	if len(lines) == 1 {
+		return "", nil
+	}
+	return lines[1], nil
 }
 
 func (a *Account) String() string {
