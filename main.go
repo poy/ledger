@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"os"
+	"sort"
+
 	"github.com/apoydence/ledger/aggregators"
 	"github.com/apoydence/ledger/database"
 	"github.com/apoydence/ledger/filters"
 	"github.com/apoydence/ledger/formatter"
 	"github.com/apoydence/ledger/transaction"
 	"github.com/codegangsta/cli"
-	"io"
-	"os"
-	"sort"
 )
 
 const (

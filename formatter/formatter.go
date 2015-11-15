@@ -2,9 +2,10 @@ package formatter
 
 import (
 	"fmt"
-	"github.com/apoydence/ledger/transaction"
 	"math"
 	"strings"
+
+	"github.com/apoydence/ledger/transaction"
 )
 
 type Formatter struct {

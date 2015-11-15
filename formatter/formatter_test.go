@@ -1,9 +1,10 @@
 package formatter_test
 
 import (
+	"strings"
+
 	"github.com/apoydence/ledger/formatter"
 	"github.com/apoydence/ledger/transaction"
-	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

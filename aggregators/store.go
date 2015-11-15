@@ -2,6 +2,7 @@ package aggregators
 
 import (
 	"fmt"
+
 	"github.com/apoydence/ledger/database"
 )
 

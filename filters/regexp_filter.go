@@ -1,9 +1,10 @@
 package filters
 
 import (
+	"regexp"
+
 	"github.com/apoydence/ledger/database"
 	"github.com/apoydence/ledger/transaction"
-	"regexp"
 )
 
 func init() {

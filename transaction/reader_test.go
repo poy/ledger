@@ -1,8 +1,9 @@
 package transaction_test
 
 import (
-	"github.com/apoydence/ledger/transaction"
 	"strings"
+
+	"github.com/apoydence/ledger/transaction"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

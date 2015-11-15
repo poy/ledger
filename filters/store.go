@@ -2,6 +2,7 @@ package filters
 
 import (
 	"fmt"
+
 	"github.com/apoydence/ledger/database"
 )
 
