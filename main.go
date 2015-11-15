@@ -9,7 +9,6 @@ import (
 	"github.com/apoydence/ledger/aggregators"
 	"github.com/apoydence/ledger/database"
 	"github.com/apoydence/ledger/filters"
-	"github.com/apoydence/ledger/formatter"
 	"github.com/apoydence/ledger/transaction"
 	"github.com/codegangsta/cli"
 )
@@ -187,10 +186,9 @@ func buildFilter(c *cli.Context) database.Filter {
 }
 
 func printResults(results []*transaction.Transaction, emit func(string)) {
-	f := formatter.New()
 	var width int
 	for _, t := range results {
-		mw := f.MinimumWidth(t)
+		mw := t.MinimumWidth()
 		if mw > width {
 			width = mw
 		}
@@ -198,7 +196,7 @@ func printResults(results []*transaction.Transaction, emit func(string)) {
 
 	sort.Sort(transaction.TransactionList(results))
 	for _, t := range results {
-		emit(f.Format(t, width+3))
+		emit(t.Format(width + 3))
 	}
 }
 

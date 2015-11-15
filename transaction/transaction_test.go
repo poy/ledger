@@ -2,6 +2,7 @@ package transaction_test
 
 import (
 	"github.com/apoydence/ledger/transaction"
+	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -10,36 +11,121 @@ import (
 var _ = Describe("Transaction", func() {
 	var t *transaction.Transaction
 
-	BeforeEach(func() {
-		t = new(transaction.Transaction)
+	Describe("Parse", func() {
+		BeforeEach(func() {
+			t = new(transaction.Transaction)
+		})
+
+		It("parses a transaction", func() {
+			line := "2015/10/12 Exxon\n\tExpenses:Auto:Gas         $10.00\n\tLiabilities:MasterCard   $-10.00"
+			remaining, err := t.Parse(line)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(remaining).To(BeZero())
+			Expect(t.Date).To(Equal(&transaction.Date{
+				Year:  2015,
+				Month: 10,
+				Day:   12,
+			}))
+			Expect(t.Title).To(Equal(&transaction.Title{
+				Value: "Exxon",
+			}))
+			Expect(t.Accounts).To(Equal(&transaction.AccountList{
+				Accounts: []*transaction.Account{
+					{
+						Name:  "Expenses:Auto:Gas",
+						Value: 10,
+					},
+					{
+						Name:  "Liabilities:MasterCard",
+						Value: -10,
+					},
+				},
+			}))
+		})
 	})
 
-	It("parses a transaction", func() {
-		line := "2015/10/12 Exxon\n\tExpenses:Auto:Gas         $10.00\n\tLiabilities:MasterCard   $-10.00"
-		remaining, err := t.Parse(line)
+	Describe("Formatting", func() {
+		var (
+			title       string
+			accountName string
+		)
 
-		Expect(err).ToNot(HaveOccurred())
-		Expect(remaining).To(BeZero())
-		Expect(t.Date).To(Equal(&transaction.Date{
-			Year:  2015,
-			Month: 10,
-			Day:   12,
-		}))
-		Expect(t.Title).To(Equal(&transaction.Title{
-			Value: "Exxon",
-		}))
-		Expect(t.Accounts).To(Equal(&transaction.AccountList{
-			Accounts: []*transaction.Account{
-				{
-					Name:  "Expenses:Auto:Gas",
-					Value: 10,
+		JustBeforeEach(func() {
+			t = &transaction.Transaction{
+				Date: &transaction.Date{},
+				Title: &transaction.Title{
+					Value: title,
 				},
-				{
-					Name:  "Liabilities:MasterCard",
-					Value: -10,
+				Accounts: &transaction.AccountList{
+					Accounts: []*transaction.Account{
+						{
+							Name:  accountName,
+							Value: -123.45,
+						},
+						{
+							Name:  accountName,
+							Value: 12.34,
+						},
+					},
 				},
-			},
-		}))
+			}
+		})
+
+		Describe("MiniumWidth()", func() {
+
+			Context("Long title", func() {
+
+				BeforeEach(func() {
+					title = "super-really-long-title"
+					accountName = "short"
+				})
+
+				It("gives the minimum width for a long title", func() {
+					Expect(t.MinimumWidth()).To(Equal(len(title) + 11))
+				})
+			})
+
+			Context("Long Account Name", func() {
+
+				BeforeEach(func() {
+					title = "short"
+					accountName = "some-really-long-account-name"
+				})
+
+				It("gives the minimum width for a long title", func() {
+					Expect(t.MinimumWidth()).To(Equal(len(accountName) + 9 + 2))
+				})
+			})
+		})
+
+		Describe("Format()", func() {
+			var (
+				result string
+				lines  []string
+			)
+
+			BeforeEach(func() {
+				title = "some-title"
+				accountName = "some-name"
+			})
+
+			JustBeforeEach(func() {
+				result = t.Format(40)
+				lines = strings.Split(result, "\n")
+				Expect(lines).To(HaveLen(4))
+			})
+
+			It("writes the date with a space and then the title", func() {
+				Expect(lines[0]).To(MatchRegexp("^0000/00/00 some-title$"))
+			})
+
+			It("sizes the accounts with spaces to equal the given width", func() {
+				Expect(lines[1]).To(MatchRegexp(`^  some-name {21}\$-123\.45$`))
+				Expect(lines[2]).To(MatchRegexp(`^  some-name   {21}\$12\.34$`))
+			})
+
+		})
 	})
 
 })
