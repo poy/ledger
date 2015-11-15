@@ -229,7 +229,9 @@ func loadDatabase(path string) *database.Database {
 	reader := transaction.NewReader(file)
 	for {
 		t, err := reader.Next()
-		fatalErr(err)
+		if err != nil {
+			fatalErr(err)
+		}
 		if t == nil {
 			break
 		}
