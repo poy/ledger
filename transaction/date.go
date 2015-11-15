@@ -37,14 +37,6 @@ func (d *Date) Parse(line string) (string, error) {
 	return parsed[4], nil
 }
 
-func safelyParseInt(value string) int {
-	i, err := strconv.ParseUint(value, 10, 32)
-	if err != nil {
-		panic(fmt.Sprintf("Invalid int(%s): %v", value, err))
-	}
-	return int(i)
-}
-
 func (d *Date) GreaterThanEqualTo(other *Date) bool {
 	if d.Year < other.Year {
 		return false
@@ -63,4 +55,12 @@ func (d *Date) GreaterThanEqualTo(other *Date) bool {
 
 func (d *Date) String() string {
 	return fmt.Sprintf("%04d/%02d/%02d", d.Year, d.Month, d.Day)
+}
+
+func safelyParseInt(value string) int {
+	i, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		panic(fmt.Sprintf("Invalid int(%s): %v", value, err))
+	}
+	return int(i)
 }

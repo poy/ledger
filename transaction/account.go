@@ -41,7 +41,7 @@ func (a *Account) Parse(line string) (string, error) {
 }
 
 func (a *Account) String() string {
-	return fmt.Sprintf("%s\t$%-6.2f", a.Name, a.Value)
+	return fmt.Sprintf("%s\t$%-0.2f", a.Name, a.Value)
 }
 
 func safelyParseFloat(value string) float64 {

@@ -37,7 +37,7 @@ func (a *AccountList) reconcile() error {
 	}
 
 	if total != 0 {
-		return fmt.Errorf("Does not reconcile. Off by $%-6.2f", total)
+		return fmt.Errorf("Does not reconcile. Off by $%-0.2f", total)
 	}
 
 	return nil

@@ -5,15 +5,20 @@ import (
 	"github.com/apoydence/ledger/aggregators"
 	"github.com/apoydence/ledger/database"
 	"github.com/apoydence/ledger/filters"
+	"github.com/apoydence/ledger/formatter"
 	"github.com/apoydence/ledger/transaction"
 	"github.com/codegangsta/cli"
+	"io"
 	"os"
+	"sort"
 )
 
 const (
 	FileLocation = "file"
 	ReportName   = "report"
 	ReportUsage  = "[START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD]"
+	FmtName      = "fmt"
+	FmtUsage     = "[FILE NAME]"
 )
 
 func main() {
@@ -27,6 +32,17 @@ func main() {
 			Name:   "aggregators",
 			Usage:  "Lists the available aggregators",
 			Action: listAggregators,
+		},
+		{
+			Name:   FmtName,
+			Usage:  FmtUsage,
+			Action: fmtFile,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "write",
+					Usage: "Write formatted file",
+				},
+			},
 		},
 	}
 
@@ -82,22 +98,69 @@ func report(c *cli.Context) {
 	end := loadDate(c.Args().Get(1))
 
 	db := loadDatabase(fileLocation)
+	emitter := func(v string) {
+		println(v)
+	}
 
 	aggNameSlice := c.StringSlice("agg")
 	if len(aggNameSlice) == 0 {
-		printResults(db.Query(start, end, filter))
+		printResults(db.Query(start, end, filter), emitter)
 		return
 	}
 
 	aggs, err := aggregators.Fetch(aggNameSlice...)
 	fatalErr(err)
 	results, aggResults := db.Aggregate(start, end, filter, aggs...)
-	printResults(results)
+	printResults(results, emitter)
 
 	fmt.Println("===============\n")
 	for i, aggResult := range aggResults {
-		fmt.Printf("%s = $%-6.2f\n", aggNameSlice[i], aggResult)
+		fmt.Printf("%s = $%-0.2f\n", aggNameSlice[i], aggResult)
 	}
+}
+
+func fmtFile(c *cli.Context) {
+	if len(c.Args()) != 1 {
+		fatal(fmt.Sprintf("Usage %s %s\n\nfmt is used to normalize the spacing and sort your ledger file\n", FmtName, FmtUsage), c)
+	}
+
+	fileName := c.Args().First()
+	results := readTransactions(fileName)
+
+	emitter := func(v string) {
+		println(v)
+	}
+
+	if c.Bool("write") {
+		writer, err := os.Create(fileName)
+		fatalErr(err)
+		defer writer.Close()
+		emitter = func(v string) {
+			_, err = writer.Write([]byte(v + "\n"))
+			fatalErr(err)
+		}
+	}
+
+	printResults(results, emitter)
+}
+
+func readTransactions(fileName string) []*transaction.Transaction {
+	file := openFile(fileName)
+	defer file.Close()
+	reader := transaction.NewReader(file)
+	var results []*transaction.Transaction
+	for {
+		t, err := reader.Next()
+		if err != nil {
+			fatalErr(err)
+		}
+
+		if t == nil {
+			break
+		}
+		results = append(results, t)
+	}
+	return results
 }
 
 func buildFilter(c *cli.Context) database.Filter {
@@ -122,9 +185,19 @@ func buildFilter(c *cli.Context) database.Filter {
 	return filters.CombineFilters(results...)
 }
 
-func printResults(results []*transaction.Transaction) {
+func printResults(results []*transaction.Transaction, emit func(string)) {
+	f := formatter.New()
+	var width int
 	for _, t := range results {
-		fmt.Println(t)
+		mw := f.MinimumWidth(t)
+		if mw > width {
+			width = mw
+		}
+	}
+
+	sort.Sort(transaction.TransactionList(results))
+	for _, t := range results {
+		emit(f.Format(t, width+3))
 	}
 }
 
@@ -142,19 +215,20 @@ func loadDate(value string) *transaction.Date {
 	return d
 }
 
-func loadDatabase(path string) *database.Database {
+func openFile(path string) io.ReadCloser {
 	file, err := os.Open(path)
-	if err != nil {
-		fatalErr(err)
-	}
+	fatalErr(err)
+	return file
+}
+
+func loadDatabase(path string) *database.Database {
+	file := openFile(path)
 
 	db := database.New()
 	reader := transaction.NewReader(file)
 	for {
 		t, err := reader.Next()
-		if err != nil {
-			fatalErr(err)
-		}
+		fatalErr(err)
 		if t == nil {
 			break
 		}
