@@ -31,13 +31,13 @@ func (a *AccountList) String() string {
 }
 
 func (a *AccountList) reconcile() error {
-	var total float64
+	var total Money
 	for _, acc := range a.Accounts {
 		total += acc.Value
 	}
 
 	if total != 0 {
-		return fmt.Errorf("Does not reconcile. Off by $%-0.2f", total)
+		return fmt.Errorf("Does not reconcile. Off by %v", total)
 	}
 
 	return nil

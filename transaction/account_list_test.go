@@ -23,11 +23,11 @@ var _ = Describe("AccountList", func() {
 			Expect(accountList.Accounts).To(HaveLen(2))
 			Expect(accountList.Accounts).To(ContainElement(&transaction.Account{
 				Name:  "Expenses:Auto:Gas",
-				Value: 10.90,
+				Value: 1090,
 			}))
 			Expect(accountList.Accounts).To(ContainElement(&transaction.Account{
 				Name:  "Liabilities:MasterCard",
-				Value: -10.90,
+				Value: -1090,
 			}))
 
 		})

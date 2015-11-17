@@ -17,25 +17,25 @@ var _ = Describe("Account", func() {
 
 		Context("with additional lines", func() {
 			It("parses the account line", func() {
-				line := "Expenses:Auto:Gas     $10.00 \n\tLiabilities:MasterCard   $-10.00"
+				line := "Expenses:Auto:Gas     $10.12 \n\tLiabilities:MasterCard   $-10.12"
 				remaining, err := account.Parse(line)
 
 				Expect(err).ToNot(HaveOccurred())
-				Expect(remaining).To(Equal("\tLiabilities:MasterCard   $-10.00"))
+				Expect(remaining).To(Equal("\tLiabilities:MasterCard   $-10.12"))
 				Expect(account.Name).To(Equal("Expenses:Auto:Gas"))
-				Expect(account.Value).To(BeEquivalentTo(10))
+				Expect(account.Value).To(BeEquivalentTo(1012))
 			})
 		})
 
 		Context("without additional lines", func() {
 			It("parses the account line", func() {
-				line := "Expenses:Auto:Gas     $10.00"
+				line := "Expenses:Auto:Gas     $10.12"
 				remaining, err := account.Parse(line)
 
 				Expect(err).ToNot(HaveOccurred())
 				Expect(remaining).To(BeZero())
 				Expect(account.Name).To(Equal("Expenses:Auto:Gas"))
-				Expect(account.Value).To(BeEquivalentTo(10))
+				Expect(account.Value).To(BeEquivalentTo(1012))
 			})
 		})
 	})

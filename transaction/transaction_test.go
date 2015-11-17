@@ -34,11 +34,11 @@ var _ = Describe("Transaction", func() {
 				Accounts: []*transaction.Account{
 					{
 						Name:  "Expenses:Auto:Gas",
-						Value: 10,
+						Value: 1000,
 					},
 					{
 						Name:  "Liabilities:MasterCard",
-						Value: -10,
+						Value: -1000,
 					},
 				},
 			}))
@@ -61,11 +61,11 @@ var _ = Describe("Transaction", func() {
 					Accounts: []*transaction.Account{
 						{
 							Name:  accountName,
-							Value: -123.45,
+							Value: -12345,
 						},
 						{
 							Name:  accountName,
-							Value: 12.34,
+							Value: 1234,
 						},
 					},
 				},
@@ -94,7 +94,9 @@ var _ = Describe("Transaction", func() {
 				})
 
 				It("gives the minimum width for a long title", func() {
-					Expect(t.MinimumWidth()).To(Equal(len(accountName) + 9 + 2))
+					// 2 for initial spaces
+					// 11 for money value plus 2 spaces
+					Expect(t.MinimumWidth()).To(Equal(len(accountName) + 10 + 2))
 				})
 			})
 		})
@@ -121,8 +123,8 @@ var _ = Describe("Transaction", func() {
 			})
 
 			It("sizes the accounts with spaces to equal the given width", func() {
-				Expect(lines[1]).To(MatchRegexp(`^  some-name {21}\$-123\.45$`))
-				Expect(lines[2]).To(MatchRegexp(`^  some-name   {21}\$12\.34$`))
+				Expect(lines[1]).To(MatchRegexp(`^  some-name {20}\$-123\.45$`))
+				Expect(lines[2]).To(MatchRegexp(`^  some-name   {20}\$12\.34$`))
 			})
 
 		})

@@ -7,7 +7,7 @@ func init() {
 }
 
 func NewCount() AggregatorFunc {
-	return AggregatorFunc(func(accounts []*transaction.Account) float64 {
-		return float64(len(accounts))
+	return AggregatorFunc(func(accounts []*transaction.Account) int64 {
+		return int64(len(accounts))
 	})
 }

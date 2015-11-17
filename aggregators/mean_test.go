@@ -21,15 +21,15 @@ var _ = Describe("Mean", func() {
 		accs := []*transaction.Account{
 			{
 				Name:  "some-name-1",
-				Value: 10,
+				Value: 1000,
 			},
 			{
 				Name:  "some-name-2",
-				Value: 5,
+				Value: 500,
 			},
 		}
 
-		Expect(mean.Aggregate(accs)).To(Equal(7.5))
+		Expect(mean.Aggregate(accs)).To(BeEquivalentTo(750))
 	})
 
 	It("registers itself with the aggregator store", func() {

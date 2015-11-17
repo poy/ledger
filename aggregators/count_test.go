@@ -20,11 +20,11 @@ var _ = Describe("Count", func() {
 		accs := []*transaction.Account{
 			{
 				Name:  "some-name-1",
-				Value: 12.34,
+				Value: 1234,
 			},
 			{
 				Name:  "some-name-2",
-				Value: 56.78,
+				Value: 5678,
 			},
 		}
 

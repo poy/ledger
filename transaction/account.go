@@ -3,7 +3,6 @@ package transaction
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -21,10 +20,12 @@ func init() {
 
 type Account struct {
 	Name  string
-	Value float64
+	Value Money
 }
 
 func (a *Account) Parse(line string) (string, error) {
+	var err error
+
 	lines := strings.SplitN(line, "\n", 2)
 	parsed := accountRegexp.FindStringSubmatch(strings.Trim(lines[0], " \t"))
 	if len(parsed) == 0 {
@@ -32,7 +33,10 @@ func (a *Account) Parse(line string) (string, error) {
 	}
 
 	a.Name = parsed[1]
-	a.Value = safelyParseFloat(parsed[2])
+	a.Value, err = ParseMoney(parsed[2])
+	if err != nil {
+		return "", err
+	}
 
 	if len(lines) == 1 {
 		return "", nil
@@ -41,13 +45,5 @@ func (a *Account) Parse(line string) (string, error) {
 }
 
 func (a *Account) String() string {
-	return fmt.Sprintf("%s\t$%-0.2f", a.Name, a.Value)
-}
-
-func safelyParseFloat(value string) float64 {
-	i, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		panic(fmt.Sprintf("Invalid float64(%s): %v", value, err))
-	}
-	return float64(i)
+	return fmt.Sprintf("%s\t%v", a.Name, a.Value)
 }

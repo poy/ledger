@@ -9,11 +9,11 @@ func init() {
 }
 
 func NewMean() AggregatorFunc {
-	return AggregatorFunc(func(accounts []*transaction.Account) float64 {
-		var result float64
+	return AggregatorFunc(func(accounts []*transaction.Account) int64 {
+		var result transaction.Money
 		for _, a := range accounts {
 			result += a.Value
 		}
-		return result / float64(len(accounts))
+		return int64(result) / int64(len(accounts))
 	})
 }

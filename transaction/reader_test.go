@@ -47,11 +47,11 @@ var _ = Describe("Reader", func() {
 					Accounts: []*transaction.Account{
 						{
 							Name:  "Expenses:Auto:Gas",
-							Value: 10,
+							Value: 1000,
 						},
 						{
 							Name:  "Liabilities:MasterCard",
-							Value: -10,
+							Value: -1000,
 						},
 					},
 				},
@@ -71,11 +71,11 @@ var _ = Describe("Reader", func() {
 					Accounts: []*transaction.Account{
 						{
 							Name:  "Expenses:Food:FastFood",
-							Value: 21.50,
+							Value: 2150,
 						},
 						{
 							Name:  "Liabilities:AmericanExpress",
-							Value: -21.50,
+							Value: -2150,
 						},
 					},
 				},

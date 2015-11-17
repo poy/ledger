@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"fmt"
-	"math"
 	"strings"
 )
 
@@ -37,7 +36,7 @@ func (t *Transaction) Format(width int) string {
 	var accs string
 	for _, a := range t.Accounts.Accounts {
 		numOfSpaces := width - (len(a.Name) + 3 + t.numberOfDigits(a.Value))
-		accs = fmt.Sprintf("%s  %s%s$%-0.2f\n", accs, a.Name, strings.Repeat(" ", numOfSpaces), a.Value)
+		accs = fmt.Sprintf("%s  %s%s%v\n", accs, a.Name, strings.Repeat(" ", numOfSpaces), a.Value)
 	}
 	return fmt.Sprintf("%v %v\n%s", t.Date, t.Title, accs)
 }
@@ -65,10 +64,6 @@ func (t *Transaction) longestAccount(accs []*Account) int {
 	return longest + 4
 }
 
-func (t *Transaction) numberOfDigits(value float64) int {
-	if value < 0 {
-		return int(math.Log10(-1*value)) + 5
-	}
-
-	return int(math.Log10(value)) + 4
+func (t *Transaction) numberOfDigits(value Money) int {
+	return len(value.String())
 }
