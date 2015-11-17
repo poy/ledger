@@ -49,6 +49,7 @@ var _ = Describe("Money", func() {
 			Expect(err).To(HaveOccurred())
 		})
 	})
+
 	Describe("String()", func() {
 		It("returns a human readable monetary value", func() {
 			Expect(Money(12345).String()).To(Equal("$123.45"))
@@ -56,6 +57,10 @@ var _ = Describe("Money", func() {
 
 		It("returns a human readable monetary value for negatives values", func() {
 			Expect(Money(-12345).String()).To(Equal("$-123.45"))
+		})
+
+		It("returns 0.00 for 0", func() {
+			Expect(Money(0).String()).To(Equal("$0.00"))
 		})
 	})
 })

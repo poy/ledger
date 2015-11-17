@@ -39,5 +39,5 @@ func (m Money) String() string {
 	if cents < 0 {
 		cents *= -1
 	}
-	return fmt.Sprintf("$%d.%d", dollars, cents)
+	return fmt.Sprintf("$%d.%02d", dollars, cents)
 }
