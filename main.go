@@ -115,7 +115,7 @@ func report(c *cli.Context) {
 
 	fmt.Println("===============\n")
 	for i, aggResult := range aggResults {
-		fmt.Printf("%s = $%-0.2f\n", aggNameSlice[i], aggResult)
+		fmt.Printf("%s = %v\n", aggNameSlice[i], transaction.Money(aggResult))
 	}
 }
 

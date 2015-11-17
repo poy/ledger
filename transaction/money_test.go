@@ -23,6 +23,20 @@ var _ = Describe("Money", func() {
 			Expect(money).To(BeEquivalentTo(-1234))
 		})
 
+		It("parses positive values with 0 dollars", func() {
+			money, err := ParseMoney("0.34")
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(money).To(BeEquivalentTo(34))
+		})
+
+		It("parses negative values with 0 dollars", func() {
+			money, err := ParseMoney("-0.34")
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(money).To(BeEquivalentTo(-34))
+		})
+
 		It("returns an error for invalid dollar value", func() {
 			_, err := ParseMoney("12x34")
 

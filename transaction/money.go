@@ -26,7 +26,7 @@ func ParseMoney(value string) (Money, error) {
 		return 0, err
 	}
 
-	if dollars < 0 {
+	if parts[0][0] == '-' {
 		return Money(dollars - int64(cents)), nil
 	}
 
