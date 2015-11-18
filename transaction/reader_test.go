@@ -35,11 +35,7 @@ var _ = Describe("Reader", func() {
 
 		Expect(t1).To(Equal(
 			&transaction.Transaction{
-				Date: &transaction.Date{
-					Year:  2015,
-					Month: 10,
-					Day:   12,
-				},
+				Date: transaction.NewDate(2015, 10, 12),
 				Title: &transaction.Title{
 					Value: "Exxon",
 				},
@@ -59,11 +55,7 @@ var _ = Describe("Reader", func() {
 
 		Expect(t2).To(Equal(
 			&transaction.Transaction{
-				Date: &transaction.Date{
-					Year:  2015,
-					Month: 10,
-					Day:   12,
-				},
+				Date: transaction.NewDate(2015, 10, 12),
 				Title: &transaction.Title{
 					Value: "Qdoba",
 				},

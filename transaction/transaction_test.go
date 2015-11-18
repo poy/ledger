@@ -1,8 +1,9 @@
 package transaction_test
 
 import (
-	"github.com/apoydence/ledger/transaction"
 	"strings"
+
+	"github.com/apoydence/ledger/transaction"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -22,11 +23,7 @@ var _ = Describe("Transaction", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(remaining).To(BeZero())
-			Expect(t.Date).To(Equal(&transaction.Date{
-				Year:  2015,
-				Month: 10,
-				Day:   12,
-			}))
+			Expect(t.Date).To(Equal(transaction.NewDate(2015, 10, 12)))
 			Expect(t.Title).To(Equal(&transaction.Title{
 				Value: "Exxon",
 			}))
@@ -53,7 +50,6 @@ var _ = Describe("Transaction", func() {
 
 		JustBeforeEach(func() {
 			t = &transaction.Transaction{
-				Date: &transaction.Date{},
 				Title: &transaction.Title{
 					Value: title,
 				},
@@ -119,14 +115,13 @@ var _ = Describe("Transaction", func() {
 			})
 
 			It("writes the date with a space and then the title", func() {
-				Expect(lines[0]).To(MatchRegexp("^0000/00/00 some-title$"))
+				Expect(lines[0]).To(MatchRegexp("^0001/01/01 some-title$"))
 			})
 
 			It("sizes the accounts with spaces to equal the given width", func() {
 				Expect(lines[1]).To(MatchRegexp(`^  some-name {20}\$-123\.45$`))
 				Expect(lines[2]).To(MatchRegexp(`^  some-name   {20}\$12\.34$`))
 			})
-
 		})
 	})
 

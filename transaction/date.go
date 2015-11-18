@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 const (
@@ -18,43 +19,25 @@ func init() {
 	dateRegexp = regexp.MustCompile(dateRegexpPattern)
 }
 
-type Date struct {
-	Year  int
-	Month int
-	Day   int
+func NewDate(year, month, day int) time.Time {
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }
 
-func (d *Date) Parse(line string) (string, error) {
+func ParseDate(line string) (time.Time, string, error) {
 	parsed := dateRegexp.FindStringSubmatch(line)
 	if len(parsed) == 0 {
-		return "", fmt.Errorf("Didn't find date in line: %s", line)
+		return time.Time{}, "", fmt.Errorf("Didn't find date in line: %s", line)
 	}
 
-	d.Year = safelyParseInt(parsed[1])
-	d.Month = safelyParseInt(parsed[2])
-	d.Day = safelyParseInt(parsed[3])
+	year := safelyParseInt(parsed[1])
+	month := safelyParseInt(parsed[2])
+	day := safelyParseInt(parsed[3])
 
-	return parsed[4], nil
+	return NewDate(year, month, day), parsed[4], nil
 }
 
-func (d *Date) GreaterThanEqualTo(other *Date) bool {
-	if d.Year < other.Year {
-		return false
-	}
-
-	if d.Month < other.Month {
-		return false
-	}
-
-	if d.Day < other.Day {
-		return false
-	}
-
-	return true
-}
-
-func (d *Date) String() string {
-	return fmt.Sprintf("%04d/%02d/%02d", d.Year, d.Month, d.Day)
+func DateToString(d time.Time) string {
+	return fmt.Sprintf("%04d/%02d/%02d", d.Year(), d.Month(), d.Day())
 }
 
 func safelyParseInt(value string) int {

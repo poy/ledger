@@ -29,41 +29,25 @@ var _ = Describe("Database", func() {
 				Accounts: &transaction.AccountList{
 					Accounts: make([]*transaction.Account, 2),
 				},
-				Date: &transaction.Date{
-					Year:  2015,
-					Month: 10,
-					Day:   3,
-				},
+				Date: transaction.NewDate(2015, 10, 3),
 			},
 			{
 				Accounts: &transaction.AccountList{
 					Accounts: make([]*transaction.Account, 2),
 				},
-				Date: &transaction.Date{
-					Year:  2014,
-					Month: 10,
-					Day:   3,
-				},
+				Date: transaction.NewDate(2014, 10, 3),
 			},
 			{
 				Accounts: &transaction.AccountList{
 					Accounts: make([]*transaction.Account, 2),
 				},
-				Date: &transaction.Date{
-					Year:  2014,
-					Month: 11,
-					Day:   3,
-				},
+				Date: transaction.NewDate(2014, 11, 3),
 			},
 			{
 				Accounts: &transaction.AccountList{
 					Accounts: make([]*transaction.Account, 2),
 				},
-				Date: &transaction.Date{
-					Year:  2015,
-					Month: 1,
-					Day:   3,
-				},
+				Date: transaction.NewDate(2015, 1, 3),
 			},
 		}
 	})
@@ -72,17 +56,10 @@ var _ = Describe("Database", func() {
 		mockFilter.resultCh <- make([]*transaction.Account, 1)
 		mockFilter.resultCh <- make([]*transaction.Account, 1)
 		db.Add(ts...)
-		start := &transaction.Date{
-			Year:  2015,
-			Month: 1,
-			Day:   1,
-		}
-		end := &transaction.Date{
-			Year:  2015,
-			Month: 12,
-			Day:   31,
-		}
+		start := transaction.NewDate(2015, 1, 1)
+		end := transaction.NewDate(2015, 12, 31)
 		results := db.Query(start, end, nil)
+
 		Expect(results).To(HaveLen(2))
 		Expect(results).To(ContainElement(ts[0]))
 		Expect(results).To(ContainElement(ts[3]))
@@ -92,16 +69,9 @@ var _ = Describe("Database", func() {
 		mockFilter.resultCh <- nil
 		mockFilter.resultCh <- make([]*transaction.Account, 1)
 		db.Add(ts...)
-		start := &transaction.Date{
-			Year:  2014,
-			Month: 10,
-			Day:   3,
-		}
-		end := &transaction.Date{
-			Year:  2014,
-			Month: 11,
-			Day:   30,
-		}
+		start := transaction.NewDate(2014, 10, 3)
+		end := transaction.NewDate(2014, 11, 30)
+
 		results := db.Query(start, end, mockFilter)
 		Expect(mockFilter.transactionCh).To(HaveLen(2))
 		Expect(results).To(HaveLen(1))
@@ -126,16 +96,9 @@ var _ = Describe("Database", func() {
 			mockAggregator1.resultCh <- 99
 			mockAggregator2.resultCh <- 101
 			db.Add(ts...)
-			start := &transaction.Date{
-				Year:  2014,
-				Month: 10,
-				Day:   3,
-			}
-			end := &transaction.Date{
-				Year:  2014,
-				Month: 11,
-				Day:   30,
-			}
+			start := transaction.NewDate(2014, 10, 3)
+			end := transaction.NewDate(2014, 11, 30)
+
 			results, aggResults := db.Aggregate(start, end, mockFilter, mockAggregator1, mockAggregator2)
 
 			Expect(mockFilter.transactionCh).To(HaveLen(2))

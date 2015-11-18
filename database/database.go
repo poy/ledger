@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/apoydence/ledger/transaction"
+	"time"
 )
 
 type Aggregator interface {
@@ -24,7 +25,7 @@ func (db *Database) Add(ts ...*transaction.Transaction) {
 	db.transactionList = append(db.transactionList, ts...)
 }
 
-func (db *Database) Aggregate(start, end *transaction.Date, f Filter, aggs ...Aggregator) ([]*transaction.Transaction, []int64) {
+func (db *Database) Aggregate(start, end time.Time, f Filter, aggs ...Aggregator) ([]*transaction.Transaction, []int64) {
 	results, accs := db.subQuery(start, end, f)
 
 	var aggResults []int64
@@ -35,12 +36,12 @@ func (db *Database) Aggregate(start, end *transaction.Date, f Filter, aggs ...Ag
 	return results, aggResults
 }
 
-func (db *Database) Query(start, end *transaction.Date, f Filter) []*transaction.Transaction {
+func (db *Database) Query(start, end time.Time, f Filter) []*transaction.Transaction {
 	results, _ := db.subQuery(start, end, f)
 	return results
 }
 
-func (db *Database) subQuery(start, end *transaction.Date, f Filter) ([]*transaction.Transaction, []*transaction.Account) {
+func (db *Database) subQuery(start, end time.Time, f Filter) ([]*transaction.Transaction, []*transaction.Account) {
 	var ts []*transaction.Transaction
 	var accsResults []*transaction.Account
 
@@ -57,8 +58,8 @@ func (db *Database) subQuery(start, end *transaction.Date, f Filter) ([]*transac
 	return ts, accsResults
 }
 
-func inTimeRange(date, start, end *transaction.Date) bool {
-	return date.GreaterThanEqualTo(start) && end.GreaterThanEqualTo(date)
+func inTimeRange(date, start, end time.Time) bool {
+	return start.Add(-24*time.Hour).Before(date) && date.Before(end.Add(24*time.Hour))
 }
 
 func filter(t *transaction.Transaction, f Filter) []*transaction.Account {

@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/apoydence/ledger/aggregators"
 	"github.com/apoydence/ledger/database"
@@ -200,9 +201,8 @@ func printResults(results []*transaction.Transaction, emit func(string)) {
 	}
 }
 
-func loadDate(value string) *transaction.Date {
-	d := new(transaction.Date)
-	extra, err := d.Parse(value)
+func loadDate(value string) time.Time {
+	date, extra, err := transaction.ParseDate(value)
 	if err != nil {
 		fatalErr(err)
 	}
@@ -211,7 +211,7 @@ func loadDate(value string) *transaction.Date {
 		fatalErr(fmt.Errorf("Invalid date %s", value))
 	}
 
-	return d
+	return date
 }
 
 func openFile(path string) io.ReadCloser {

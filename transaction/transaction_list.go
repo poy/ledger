@@ -7,7 +7,7 @@ func (t TransactionList) Len() int {
 }
 
 func (t TransactionList) Less(i, j int) bool {
-	return t[j].Date.GreaterThanEqualTo(t[i].Date)
+	return t[i].Date.Before(t[j].Date)
 }
 
 func (t TransactionList) Swap(i, j int) {

@@ -3,21 +3,21 @@ package transaction
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Transaction struct {
-	Date     *Date
+	Date     time.Time
 	Title    *Title
 	Accounts *AccountList
 }
 
 func (t *Transaction) Parse(line string) (string, error) {
-	t.Date = new(Date)
 	t.Title = new(Title)
 	t.Accounts = new(AccountList)
 
 	var err error
-	if line, err = t.Date.Parse(line); err != nil {
+	if t.Date, line, err = ParseDate(line); err != nil {
 		return "", err
 	}
 
@@ -38,7 +38,7 @@ func (t *Transaction) Format(width int) string {
 		numOfSpaces := width - (len(a.Name) + 3 + t.numberOfDigits(a.Value))
 		accs = fmt.Sprintf("%s  %s%s%v\n", accs, a.Name, strings.Repeat(" ", numOfSpaces), a.Value)
 	}
-	return fmt.Sprintf("%v %v\n%s", t.Date, t.Title, accs)
+	return fmt.Sprintf("%s %v\n%s", DateToString(t.Date), t.Title, accs)
 }
 
 func (t *Transaction) MinimumWidth() int {

@@ -1,8 +1,9 @@
 package transaction_test
 
 import (
-	"github.com/apoydence/ledger/transaction"
 	"sort"
+
+	"github.com/apoydence/ledger/transaction"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -19,19 +20,13 @@ var _ = Describe("TransactionList", func() {
 
 		BeforeEach(func() {
 			t1 = &transaction.Transaction{
-				Date: &transaction.Date{
-					Year: 2,
-				},
+				Date: transaction.NewDate(2012, 1, 1),
 			}
 			t2 = &transaction.Transaction{
-				Date: &transaction.Date{
-					Year: 3,
-				},
+				Date: transaction.NewDate(2013, 1, 1),
 			}
 			t3 = &transaction.Transaction{
-				Date: &transaction.Date{
-					Year: 1,
-				},
+				Date: transaction.NewDate(2011, 1, 1),
 			}
 			list = transaction.TransactionList([]*transaction.Transaction{
 				t1,
