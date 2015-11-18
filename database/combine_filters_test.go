@@ -1,8 +1,7 @@
-package filters_test
+package database_test
 
 import (
 	"github.com/apoydence/ledger/database"
-	"github.com/apoydence/ledger/filters"
 	"github.com/apoydence/ledger/transaction"
 
 	. "github.com/onsi/ginkgo"
@@ -23,7 +22,7 @@ var _ = Describe("CombineFilters", func() {
 		}
 		mockFilter1 = newMockFilter()
 		mockFilter2 = newMockFilter()
-		filter = filters.CombineFilters(mockFilter1, mockFilter2)
+		filter = database.CombineFilters(mockFilter1, mockFilter2, nil)
 	})
 
 	It("uses the first filter then the second", func() {

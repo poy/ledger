@@ -62,5 +62,9 @@ var _ = Describe("Money", func() {
 		It("returns 0.00 for 0", func() {
 			Expect(Money(0).String()).To(Equal("$0.00"))
 		})
+
+		It("returns -0.08 for -8", func() {
+			Expect(Money(-8).String()).To(Equal("$-0.08"))
+		})
 	})
 })

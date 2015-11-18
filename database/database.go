@@ -23,6 +23,9 @@ func (db *Database) Add(ts ...*transaction.Transaction) {
 
 func (db *Database) Aggregate(start, end time.Time, f Filter, aggs ...Aggregator) ([]*transaction.Transaction, []string) {
 	results, accs := db.subQuery(start, end, f)
+	if len(accs) == 0 {
+		return nil, nil
+	}
 
 	var aggResults []string
 	for _, agg := range aggs {

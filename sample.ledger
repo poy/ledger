@@ -17,3 +17,7 @@
 2015/10/15 Shell
   Expenses:Auto:Gas            $55.96
   Liabilities:AmericanExpress  $-55.96
+
+2015/10/14 WellsFargo
+  Assets:WellsFargo:Checking $0.08
+  Income:Interest          $-0.08

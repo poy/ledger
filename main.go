@@ -16,10 +16,15 @@ import (
 
 const (
 	FileLocation = "file"
-	ReportName   = "report"
-	ReportUsage  = "[START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD]"
-	FmtName      = "fmt"
-	FmtUsage     = "[FILE NAME]"
+
+	ReportName  = "report"
+	ReportUsage = "[START DATE YYYY/MM/DD] [END DATE YYYY/MM/DD]"
+
+	FmtName  = "fmt"
+	FmtUsage = "[FILE NAME]"
+
+	GroupName  = "group"
+	GroupUsage = ReportUsage
 )
 
 func main() {
@@ -33,6 +38,12 @@ func main() {
 			Name:   "aggregators",
 			Usage:  "Lists the available aggregators",
 			Action: listAggregators,
+		},
+		{
+			Name:   GroupName,
+			Usage:  GroupUsage,
+			Action: grouping,
+			Flags:  buildReportFlags(),
 		},
 		{
 			Name:   FmtName,
@@ -50,12 +61,16 @@ func main() {
 	app.Run(os.Args)
 }
 
-func buildReportFlags() []cli.Flag {
-	var results []cli.Flag
-	results = append(results, cli.StringFlag{
+func buildFileFlag() cli.Flag {
+	return cli.StringFlag{
 		Name:  FileLocation,
 		Usage: "The path to the ledger transaction file",
-	})
+	}
+}
+
+func buildReportFlags() []cli.Flag {
+	var results []cli.Flag
+	results = append(results, buildFileFlag())
 	results = append(results, buildFilterFlags()...)
 	results = append(results, cli.StringSliceFlag{
 		Name:  "agg",
@@ -98,7 +113,8 @@ func report(c *cli.Context) {
 	start := loadDate(c.Args().Get(0))
 	end := loadDate(c.Args().Get(1))
 
-	db := loadDatabase(fileLocation)
+	db := new(database.Database)
+	loadDatabase(fileLocation, db.Add)
 	emitter := func(v string) {
 		println(v)
 	}
@@ -117,6 +133,42 @@ func report(c *cli.Context) {
 	fmt.Println("===============\n")
 	for i, aggResult := range aggResults {
 		fmt.Printf("%s = %s\n", aggNameSlice[i], aggResult)
+	}
+}
+
+func grouping(c *cli.Context) {
+	if len(c.Args()) != 2 {
+		fatal("", c)
+	}
+
+	fileLocation := c.String(FileLocation)
+	if len(fileLocation) == 0 {
+		fatal(fmt.Sprintf("Missing required '--%s' flag\n", FileLocation), c)
+	}
+
+	filter := buildFilter(c)
+
+	start := loadDate(c.Args().Get(0))
+	end := loadDate(c.Args().Get(1))
+
+	aggNameSlice := c.StringSlice("agg")
+	if len(aggNameSlice) == 0 {
+		fatal("Missing required '--agg' flag(s)\n", c)
+	}
+
+	grouping := database.NewGrouping()
+	loadDatabase(fileLocation, grouping.Add)
+
+	aggs, err := aggregators.Fetch(aggNameSlice...)
+	fatalErr(err)
+	results := grouping.Aggregate(start, end, filter, aggs...)
+
+	for accName, value := range results {
+		println(accName)
+		for i, r := range value {
+			fmt.Printf("\t%s = %s\n", aggNameSlice[i], r)
+		}
+		println()
 	}
 }
 
@@ -183,7 +235,7 @@ func buildFilter(c *cli.Context) database.Filter {
 		return nil
 	}
 
-	return filters.CombineFilters(results...)
+	return database.CombineFilters(results...)
 }
 
 func printResults(results []*transaction.Transaction, emit func(string)) {
@@ -220,10 +272,9 @@ func openFile(path string) io.ReadCloser {
 	return file
 }
 
-func loadDatabase(path string) *database.Database {
+func loadDatabase(path string, f func(t ...*transaction.Transaction)) {
 	file := openFile(path)
 
-	db := new(database.Database)
 	reader := transaction.NewReader(file)
 	for {
 		t, err := reader.Next()
@@ -233,10 +284,8 @@ func loadDatabase(path string) *database.Database {
 		if t == nil {
 			break
 		}
-		db.Add(t)
+		f(t)
 	}
-
-	return db
 }
 
 func fatalErr(err error) {

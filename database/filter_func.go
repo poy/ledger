@@ -1,4 +1,4 @@
-package filters
+package database
 
 import "github.com/apoydence/ledger/transaction"
 

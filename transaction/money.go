@@ -36,8 +36,19 @@ func ParseMoney(value string) (Money, error) {
 func (m Money) String() string {
 	dollars := m / 100
 	cents := m % 100
+
+	if dollars < 0 {
+		dollars *= -1
+	}
+
 	if cents < 0 {
 		cents *= -1
 	}
-	return fmt.Sprintf("$%d.%02d", dollars, cents)
+
+	var sign string
+	if m < 0 {
+		sign = "-"
+	}
+
+	return fmt.Sprintf("$%s%d.%02d", sign, dollars, cents)
 }
