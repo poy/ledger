@@ -28,7 +28,7 @@ var _ = Describe("Count", func() {
 			},
 		}
 
-		Expect(count.Aggregate(accs)).To(BeEquivalentTo(2))
+		Expect(count.Aggregate(accs)).To(Equal("2"))
 	})
 
 	It("registers itself with the aggregator store", func() {

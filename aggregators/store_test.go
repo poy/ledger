@@ -12,8 +12,8 @@ var _ = Describe("Store", func() {
 	var someAgg aggregators.AggregatorFunc
 
 	BeforeEach(func() {
-		someAgg = aggregators.AggregatorFunc(func([]*transaction.Account) int64 {
-			return 0
+		someAgg = aggregators.AggregatorFunc(func([]*transaction.Account) string {
+			return ""
 		})
 	})
 

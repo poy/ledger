@@ -116,7 +116,7 @@ func report(c *cli.Context) {
 
 	fmt.Println("===============\n")
 	for i, aggResult := range aggResults {
-		fmt.Printf("%s = %v\n", aggNameSlice[i], transaction.Money(aggResult))
+		fmt.Printf("%s = %s\n", aggNameSlice[i], aggResult)
 	}
 }
 
@@ -223,7 +223,7 @@ func openFile(path string) io.ReadCloser {
 func loadDatabase(path string) *database.Database {
 	file := openFile(path)
 
-	db := database.New()
+	db := new(database.Database)
 	reader := transaction.NewReader(file)
 	for {
 		t, err := reader.Next()

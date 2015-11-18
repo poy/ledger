@@ -29,7 +29,7 @@ var _ = Describe("Mean", func() {
 			},
 		}
 
-		Expect(mean.Aggregate(accs)).To(BeEquivalentTo(750))
+		Expect(mean.Aggregate(accs)).To(Equal("$7.50"))
 	})
 
 	It("registers itself with the aggregator store", func() {

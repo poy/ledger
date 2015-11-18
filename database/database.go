@@ -6,7 +6,7 @@ import (
 )
 
 type Aggregator interface {
-	Aggregate(acc []*transaction.Account) int64
+	Aggregate(acc []*transaction.Account) string
 }
 
 type Filter interface {
@@ -17,18 +17,14 @@ type Database struct {
 	transactionList []*transaction.Transaction
 }
 
-func New() *Database {
-	return new(Database)
-}
-
 func (db *Database) Add(ts ...*transaction.Transaction) {
 	db.transactionList = append(db.transactionList, ts...)
 }
 
-func (db *Database) Aggregate(start, end time.Time, f Filter, aggs ...Aggregator) ([]*transaction.Transaction, []int64) {
+func (db *Database) Aggregate(start, end time.Time, f Filter, aggs ...Aggregator) ([]*transaction.Transaction, []string) {
 	results, accs := db.subQuery(start, end, f)
 
-	var aggResults []int64
+	var aggResults []string
 	for _, agg := range aggs {
 		aggResults = append(aggResults, agg.Aggregate(accs))
 	}

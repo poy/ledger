@@ -9,11 +9,11 @@ func init() {
 }
 
 func NewSum() AggregatorFunc {
-	return AggregatorFunc(func(accounts []*transaction.Account) int64 {
+	return AggregatorFunc(func(accounts []*transaction.Account) string {
 		var result transaction.Money
 		for _, a := range accounts {
 			result += a.Value
 		}
-		return int64(result)
+		return result.String()
 	})
 }
