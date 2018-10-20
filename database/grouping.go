@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/apoydence/ledger/transaction"
+	"github.com/poy/ledger/transaction"
 	"time"
 )
 

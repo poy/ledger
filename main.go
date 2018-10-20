@@ -7,11 +7,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/apoydence/ledger/aggregators"
-	"github.com/apoydence/ledger/database"
-	"github.com/apoydence/ledger/filters"
-	"github.com/apoydence/ledger/transaction"
 	"github.com/codegangsta/cli"
+	"github.com/poy/ledger/aggregators"
+	"github.com/poy/ledger/database"
+	"github.com/poy/ledger/filters"
+	"github.com/poy/ledger/transaction"
 )
 
 const (
@@ -130,7 +130,8 @@ func report(c *cli.Context) {
 	results, aggResults := db.Aggregate(start, end, filter, aggs...)
 	printResults(results, emitter)
 
-	fmt.Println("===============\n")
+	fmt.Println("===============")
+	fmt.Println()
 	for i, aggResult := range aggResults {
 		fmt.Printf("%s = %s\n", aggNameSlice[i], aggResult)
 	}

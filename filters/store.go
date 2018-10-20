@@ -3,7 +3,7 @@ package filters
 import (
 	"fmt"
 
-	"github.com/apoydence/ledger/database"
+	"github.com/poy/ledger/database"
 )
 
 type FilterFactory interface {

@@ -1,6 +1,6 @@
 package filters_test
 
-import "github.com/apoydence/ledger/transaction"
+import "github.com/poy/ledger/transaction"
 
 type mockFilter struct {
 	transactionCh chan *transaction.Transaction

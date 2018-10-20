@@ -1,8 +1,8 @@
 package filters_test
 
 import (
-	"github.com/apoydence/ledger/database"
-	"github.com/apoydence/ledger/filters"
+	"github.com/poy/ledger/database"
+	"github.com/poy/ledger/filters"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

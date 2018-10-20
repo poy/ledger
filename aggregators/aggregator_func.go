@@ -1,7 +1,7 @@
 package aggregators
 
 import (
-	"github.com/apoydence/ledger/transaction"
+	"github.com/poy/ledger/transaction"
 )
 
 type AggregatorFunc func([]*transaction.Account) string

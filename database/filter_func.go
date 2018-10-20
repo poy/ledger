@@ -1,6 +1,6 @@
 package database
 
-import "github.com/apoydence/ledger/transaction"
+import "github.com/poy/ledger/transaction"
 
 type FilterFunc func(*transaction.Transaction) []*transaction.Account
 

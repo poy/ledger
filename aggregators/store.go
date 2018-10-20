@@ -3,7 +3,7 @@ package aggregators
 import (
 	"fmt"
 
-	"github.com/apoydence/ledger/database"
+	"github.com/poy/ledger/database"
 )
 
 var store map[string]database.Aggregator

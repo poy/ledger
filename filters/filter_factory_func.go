@@ -1,6 +1,6 @@
 package filters
 
-import "github.com/apoydence/ledger/database"
+import "github.com/poy/ledger/database"
 
 type FilterFactoryFunc func(arg string) (database.Filter, error)
 

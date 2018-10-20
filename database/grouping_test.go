@@ -1,9 +1,10 @@
 package database_test
 
 import (
-	"github.com/apoydence/ledger/database"
-	"github.com/apoydence/ledger/transaction"
 	"time"
+
+	"github.com/poy/ledger/database"
+	"github.com/poy/ledger/transaction"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -12,8 +13,7 @@ import (
 var _ = Describe("Grouping", func() {
 
 	var (
-		mockFilter *mockFilter
-		mockAgg    *mockAggregator
+		mockAgg *mockAggregator
 
 		start time.Time
 		end   time.Time
@@ -69,7 +69,6 @@ var _ = Describe("Grouping", func() {
 			},
 		}
 
-		mockFilter = newMockFilter()
 		mockAgg = newMockAggregator()
 		grouping = database.NewGrouping()
 		grouping.Add(t1, t2)
